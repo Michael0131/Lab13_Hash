@@ -41,19 +41,16 @@ namespace custom
       //
       // Construct
       //
-      // ---------- Michael Code to Complete ----------
       unordered_set()
       {
          numElements = 0;
       }
 
-      // ---------- James Code to Complete ----------
       unordered_set(unordered_set& rhs)
       {
          *this = rhs;
       }
 
-      // ---------- Brayden Code to Complete ----------
       unordered_set(unordered_set&& rhs)
       {
           // Move each bucket list over
@@ -64,7 +61,6 @@ namespace custom
           rhs.numElements = 0;
       }
 
-      // ---------- Michael Code to Complete ----------
       template <class Iterator>
       unordered_set(Iterator first, Iterator last)
       {
@@ -76,7 +72,6 @@ namespace custom
       //
       // Assign
       //
-      // ---------- Michael Code to Complete ----------
       unordered_set& operator=(unordered_set& rhs)
       {
          if (this == &rhs)
@@ -88,7 +83,6 @@ namespace custom
          return *this;
       }
 
-      // ---------- Michael Code to Complete ----------
       unordered_set& operator=(unordered_set&& rhs)
       {
          if (this == &rhs)
@@ -101,7 +95,6 @@ namespace custom
          return *this;
       }
 
-      // ---------- Michael Code to Complete ----------
       unordered_set& operator=(const std::initializer_list<T>& il)
       {
          clear();
@@ -109,7 +102,6 @@ namespace custom
          return *this;
       }
 
-      // ---------- Brayden Code to Complete ----------
       void swap(unordered_set& rhs)
       {
           using std::swap;
@@ -124,7 +116,6 @@ namespace custom
       class iterator;
       class local_iterator;
 
-      // ---------- Brayden Code to Complete ----------
       iterator begin()
       {
          // First element in the first non-empty bucket
@@ -137,7 +128,6 @@ namespace custom
          return end();
       }
 
-      // ---------- Brayden Code to Complete ----------
       iterator end()
       {
          // Match the “done” state that operator++ eventually produces
@@ -147,7 +137,6 @@ namespace custom
                          typename custom::list<T>::iterator());
       }
 
-      // ---------- James Code to Complete ----------
       local_iterator begin(size_t iBucket)
       {
          // Return if bucket doesn't exist
@@ -162,7 +151,6 @@ namespace custom
          return local_iterator(buckets[iBucket].begin());
       }
 
-      // ---------- James Code to Complete ----------
       local_iterator end(size_t iBucket)
       {
          // Return if bucket doesn't exist
@@ -175,28 +163,23 @@ namespace custom
       //
       // Access
       //
-      // ---------- Michael Code to Complete ----------
       size_t bucket(const T& t)
       {
          return std::hash<T>{}(t) % 10;
       }
 
-      // ---------- Michael Code to Complete ----------
       iterator find(const T& t);
 
       //   
       // Insert
       //
-      // ---------- James Code to Complete ----------
       custom::pair<iterator, bool> insert(const T& t);
 
-      // ---------- James Code to Complete ----------
       void insert(const std::initializer_list<T>& il);
 
       // 
       // Remove
       //
-      // ---------- Brayden Code to Complete ----------
       void clear() noexcept
       {
           for (int i = 0; i < bucket_count(); ++i)
@@ -204,31 +187,26 @@ namespace custom
           numElements = 0;
       }
 
-      // ---------- Brayden Code to Complete ----------
       iterator erase(const T& t);
 
       //
       // Status
       //
-      // ---------- Brayden Code to Complete ----------
       size_t size() const
       {
           return (size_t)numElements;
       }
 
-      // ---------- Brayden Code to Complete ----------
       bool empty() const
       {
          return numElements == 0;
       }
 
-      // ---------- Brayden Code to Complete ----------
       size_t bucket_count() const
       {
          return 10;
       }
 
-      // ---------- Brayden Code to Complete ----------
       size_t bucket_size(size_t i) const
       {
          if (i >= bucket_count())
@@ -259,7 +237,6 @@ namespace custom
       // 
       // Construct
       //
-      // ---------- Michael Code to Complete ----------
       iterator()
       {
          pBucket = nullptr;
@@ -267,7 +244,6 @@ namespace custom
          itList = typename custom::list<T>::iterator();
       }
 
-      // ---------- Michael Code to Complete ----------
       iterator(typename custom::list<T>* pBucket,
          typename custom::list<T>* pBucketEnd,
          typename custom::list<T>::iterator itList)
@@ -277,7 +253,6 @@ namespace custom
          this->itList = itList;
       }
 
-      // ---------- Michael Code to Complete ----------
       iterator(const iterator& rhs)
       {
          pBucket = rhs.pBucket;
@@ -288,7 +263,6 @@ namespace custom
       //
       // Assign
       //
-      // ---------- Brayden Code to Complete ----------
       iterator& operator = (const iterator& rhs)
       {
          if (this != &rhs)
@@ -303,13 +277,11 @@ namespace custom
       //
       // Compare
       //
-      // ---------- Michael Code to Complete ----------
       bool operator != (const iterator& rhs) const
       {
          return !(*this == rhs);
       }
 
-      // ---------- Michael Code to Complete ----------
       bool operator == (const iterator& rhs) const
       {
          return pBucket == rhs.pBucket &&
@@ -320,7 +292,6 @@ namespace custom
       // 
       // Access
       //
-      // ---------- Michael Code to Complete ----------
       T& operator * ()
       {
          return *itList;
@@ -329,10 +300,8 @@ namespace custom
       //
       // Arithmetic
       //
-      // ---------- James Code to Complete ----------
       iterator& operator ++ ();
 
-      // ---------- Brayden Code to Complete ----------
       iterator operator ++ (int postfix)
       {
           iterator temp(*this);
@@ -362,19 +331,16 @@ namespace custom
       // 
       // Construct
       //
-      // ---------- Michael Code to Complete ----------
       local_iterator()
       {
          itList = typename custom::list<T>::iterator();
       }
 
-      // ---------- Michael Code to Complete ----------
       local_iterator(const typename custom::list<T>::iterator& itList)
       {
          this->itList = itList;
       }
 
-      // ---------- Michael Code to Complete ----------
       local_iterator(const local_iterator& rhs)
       {
          itList = rhs.itList;
@@ -383,7 +349,6 @@ namespace custom
       //
       // Assign
       //
-      // ---------- Michael Code to Complete ----------
       local_iterator& operator = (const local_iterator& rhs)
       {
          if (this != &rhs)
@@ -394,13 +359,11 @@ namespace custom
       // 
       // Compare
       //
-      // ---------- Michael Code to Complete ----------
       bool operator != (const local_iterator& rhs) const
       {
          return !(*this == rhs);
       }
 
-      // ---------- Michael Code to Complete ----------
       bool operator == (const local_iterator& rhs) const
       {
          return itList == rhs.itList;
@@ -409,7 +372,6 @@ namespace custom
       // 
       // Access
       //
-      // ---------- Michael Code to Complete ----------
       T& operator * ()
       {
          return *itList;
@@ -418,14 +380,12 @@ namespace custom
       // 
       // Arithmetic
       //
-      // ---------- James Code to Complete ----------
       local_iterator& operator ++ ()
       {
          ++itList;
          return *this;
       }
 
-      // ---------- James Code to Complete ----------
       local_iterator operator ++ (int postfix)
       {
          local_iterator temp(*this);
@@ -442,7 +402,6 @@ namespace custom
     * UNORDERED SET :: ERASE
     * Remove one element from the unordered set
     ****************************************/
-    // ---------- Brayden Code to Complete ----------
    template <typename T>
    typename unordered_set <T> ::iterator unordered_set<T>::erase(const T& t)
    {
@@ -468,7 +427,6 @@ namespace custom
     * UNORDERED SET :: INSERT
     * Insert one element into the hash
     ****************************************/
-    // ---------- James Code to Complete ----------
    template <typename T>
    custom::pair<typename custom::unordered_set<T>::iterator, bool> unordered_set<T>::insert(const T& t)
    {
@@ -501,7 +459,6 @@ namespace custom
       );
    }
 
-   // ---------- James Code to Complete ----------
    template <typename T>
    void unordered_set<T>::insert(const std::initializer_list<T>& il)
    {
@@ -513,7 +470,6 @@ namespace custom
     * UNORDERED SET :: FIND
     * Find an element in an unordered set
     ****************************************/
-    // ---------- Michael Code to Complete ----------
    template <typename T>
    typename unordered_set <T> ::iterator unordered_set<T>::find(const T& t)
    {
@@ -534,7 +490,6 @@ namespace custom
     * UNORDERED SET :: ITERATOR :: INCREMENT
     * Advance by one element in an unordered set
     ****************************************/
-    // ---------- James Code to Complete ----------
    template <typename T>
    typename unordered_set<T>::iterator& unordered_set<T>::iterator::operator ++ ()
    {
@@ -572,7 +527,6 @@ namespace custom
     * SWAP
     * Stand-alone unordered set swap
     ****************************************/
-    // ---------- James Code to Complete ----------
    template <typename T>
    void swap(unordered_set<T>& lhs, unordered_set<T>& rhs)
    {
