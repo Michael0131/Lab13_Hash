@@ -56,6 +56,12 @@ namespace custom
       // ---------- Brayden Code to Complete ----------
       unordered_set(unordered_set&& rhs)
       {
+          // Move each bucket list over
+          for (int i = 0; i < bucket_count(); ++i)
+             buckets[i] = std::move(rhs.buckets[i]); // steal the contents
+       
+          numElements = rhs.numElements;
+          rhs.numElements = 0;
       }
 
       // ---------- Michael Code to Complete ----------
@@ -106,6 +112,10 @@ namespace custom
       // ---------- Brayden Code to Complete ----------
       void swap(unordered_set& rhs)
       {
+          using std::swap;
+          swap(numElements, rhs.numElements);
+          for (int i = 0; i < bucket_count(); ++i)
+              buckets[i].swap(rhs.buckets[i]);
       }
 
       // 
@@ -117,13 +127,24 @@ namespace custom
       // ---------- Brayden Code to Complete ----------
       iterator begin()
       {
-         return iterator();
+         // First element in the first non-empty bucket
+         for (int i = 0; i < bucket_count(); ++i)
+         {
+             if (!buckets[i].empty())
+                 return iterator(&buckets[i], buckets + bucket_count(), buckets[i].begin());
+         }
+
+         return end();
       }
 
       // ---------- Brayden Code to Complete ----------
       iterator end()
       {
-         return iterator();
+         // Match the “done” state that operator++ eventually produces
+         // (pBucket == pBucketEnd and itList is default-constructed).
+         return iterator(buckets + bucket_count(),
+                         buckets + bucket_count(),
+                         typename custom::list<T>::iterator());
       }
 
       // ---------- James Code to Complete ----------
@@ -178,6 +199,9 @@ namespace custom
       // ---------- Brayden Code to Complete ----------
       void clear() noexcept
       {
+          for (int i = 0; i < bucket_count(); ++i)
+              buckets[i].clear();
+          numElements = 0;
       }
 
       // ---------- Brayden Code to Complete ----------
@@ -189,25 +213,29 @@ namespace custom
       // ---------- Brayden Code to Complete ----------
       size_t size() const
       {
-         return 99;
+          return (size_t)numElements;
       }
 
       // ---------- Brayden Code to Complete ----------
       bool empty() const
       {
-         return false;
+         return numElements == 0;
       }
 
       // ---------- Brayden Code to Complete ----------
       size_t bucket_count() const
       {
-         return 100;
+         return 10;
       }
 
       // ---------- Brayden Code to Complete ----------
       size_t bucket_size(size_t i) const
       {
-         return 99;
+         if (i >= bucket_count())
+         {
+            return 0;
+         }
+         return buckets[i].size();
       }
 
    private:
@@ -263,6 +291,12 @@ namespace custom
       // ---------- Brayden Code to Complete ----------
       iterator& operator = (const iterator& rhs)
       {
+         if (this != &rhs)
+         {
+            pBucket = rhs.pBucket;
+            pBucketEnd = rhs.pBucketEnd;
+            itList = rhs.itList;
+         }
          return *this;
       }
 
@@ -301,7 +335,9 @@ namespace custom
       // ---------- Brayden Code to Complete ----------
       iterator operator ++ (int postfix)
       {
-         return *this;
+          iterator temp(*this);
+          ++(*this);
+          return temp;
       }
 
    private:
@@ -410,7 +446,22 @@ namespace custom
    template <typename T>
    typename unordered_set <T> ::iterator unordered_set<T>::erase(const T& t)
    {
-      return iterator();
+      // Find the element
+      iterator itErase = find(t);
+      if (itErase == end())
+      {
+          return end();
+      }
+
+      // Compute the next iterator before we erase itErase's list iterator
+      iterator itNext = itErase;
+      ++itNext;   
+
+      // Remove from the underlying bucket
+      itErase.pBucket->erase(itErase.itList);
+      --numElements;
+
+      return itNext;
    }
 
    /*****************************************
