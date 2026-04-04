@@ -50,6 +50,7 @@ namespace custom
       // ---------- James Code to Complete ----------
       unordered_set(unordered_set& rhs)
       {
+         *this = rhs;
       }
 
       // ---------- Brayden Code to Complete ----------
@@ -128,13 +129,26 @@ namespace custom
       // ---------- James Code to Complete ----------
       local_iterator begin(size_t iBucket)
       {
-         return local_iterator();
+         // Return if bucket doesn't exist
+         if (iBucket >= bucket_count())
+            return end(iBucket);
+
+         // Return if empty
+         if (buckets[iBucket].empty())
+            return end(iBucket);
+         
+
+         return local_iterator(buckets[iBucket].begin());
       }
 
       // ---------- James Code to Complete ----------
       local_iterator end(size_t iBucket)
       {
-         return local_iterator();
+         // Return if bucket doesn't exist
+         if (iBucket >= bucket_count())
+            return local_iterator();
+         
+         return local_iterator(buckets[iBucket].end());
       }
 
       //
@@ -371,13 +385,16 @@ namespace custom
       // ---------- James Code to Complete ----------
       local_iterator& operator ++ ()
       {
+         ++itList;
          return *this;
       }
 
       // ---------- James Code to Complete ----------
       local_iterator operator ++ (int postfix)
       {
-         return *this;
+         local_iterator temp(*this);
+         ++itList;
+         return temp;
       }
 
    private:
@@ -404,13 +421,41 @@ namespace custom
    template <typename T>
    custom::pair<typename custom::unordered_set<T>::iterator, bool> unordered_set<T>::insert(const T& t)
    {
-      return custom::pair<custom::unordered_set<T>::iterator, bool>(iterator(), true);
+      // 1. Find the bucket
+      size_t iBucket = bucket(t);
+
+      // 2. Check for duplicates
+      for (auto it = buckets[iBucket].begin(); it != buckets[iBucket].end(); ++it)
+      {
+         if (*it == t)
+         {
+            // Return iterator to existing element and false
+            return custom::pair<typename custom::unordered_set<T>::iterator, bool>(
+               iterator(&buckets[iBucket], &buckets[10], it),
+               false
+            );
+         }
+      }
+
+      // 3. Insert the new element at the FRONT of the bucket's list.
+      // This makes the iterator to the new element simply .begin()
+      buckets[iBucket].push_front(t);
+      numElements++;
+
+      // 4. Return results.
+      // The new element is now at the front of this specific bucket.
+      return custom::pair<typename custom::unordered_set<T>::iterator, bool>(
+         iterator(&buckets[iBucket], &buckets[10], buckets[iBucket].begin()),
+         true
+      );
    }
 
    // ---------- James Code to Complete ----------
    template <typename T>
    void unordered_set<T>::insert(const std::initializer_list<T>& il)
    {
+      for (const auto& element : il)
+         insert(element);
    }
 
    /*****************************************
@@ -440,8 +485,35 @@ namespace custom
     ****************************************/
     // ---------- James Code to Complete ----------
    template <typename T>
-   typename unordered_set <T> ::iterator& unordered_set<T>::iterator::operator ++ ()
+   typename unordered_set<T>::iterator& unordered_set<T>::iterator::operator ++ ()
    {
+      // 1. If we are already at the end of the entire table, do nothing.
+      if (pBucket == pBucketEnd)
+         return *this;
+
+      // 2. Advance the list iterator.
+      ++itList;
+
+      // 3. If we haven't reached the end of the current bucket, we are done!
+      if (itList != pBucket->end())
+         return *this;
+
+      // 4. If we reached the end of the bucket, find the next non-empty bucket.
+      // Move to the next bucket address.
+      pBucket++;
+
+      // Keep moving until we find a bucket with something in it or we hit the end.
+      while (pBucket != pBucketEnd && pBucket->empty())
+      {
+         pBucket++;
+      }
+
+      // 5. Update itList based on where we landed.
+      if (pBucket != pBucketEnd)
+         itList = pBucket->begin(); // Start of the new bucket
+      else
+         itList = typename custom::list<T>::iterator(); // Reset to null/default for end()
+
       return *this;
    }
 
@@ -453,6 +525,7 @@ namespace custom
    template <typename T>
    void swap(unordered_set<T>& lhs, unordered_set<T>& rhs)
    {
+      lhs.swap(rhs);
    }
 
 }
