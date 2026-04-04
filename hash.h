@@ -437,15 +437,15 @@ namespace custom
          }
       }
 
-      // 3. Insert the new element at the FRONT of the bucket's list.
-      // This makes the iterator to the new element simply .begin()
-      buckets[iBucket].push_front(t);
+      // 3. Insert the new element at the BACK of the bucket's list.
+      // This makes the iterator to the new element simply .rbegin()
+      buckets[iBucket].push_back(t);
       numElements++;
 
       // 4. Return results.
-      // The new element is now at the front of this specific bucket.
+      // The new element is now at the back of this specific bucket.
       return custom::pair<typename custom::unordered_set<T>::iterator, bool>(
-         iterator(&buckets[iBucket], &buckets[10], buckets[iBucket].begin()),
+         iterator(&buckets[iBucket], &buckets[10], buckets[iBucket].rbegin()),
          true
       );
    }
